@@ -4,6 +4,8 @@ import logging
 import time
 
 LOG_FILENAME = 'milestone2A_log.txt'
+YAML_FILE_NAME = 'D:\KLA\DataSet\Milestone1\Milestone1A.yaml'
+
 Format = "%(asctime)s.%(msecs)06d;%(message)s"
 logging.basicConfig(
     format=Format,
@@ -16,13 +18,6 @@ def yamlParse(filepath):
     with open(filepath) as stream:
         parsed_yaml = yaml.safe_load(stream)
     return parsed_yaml
-
-"""def returnNestedDict(dict_obj):
-    for key,value in dict_obj.items():
-        if isinstance(value, dict):
-            return returnNestedDict(value) 
-        else:
-            return dict_obj"""
 
 def timeFunction(input_dict):
     val = input_dict['ExecutionTime']
@@ -48,8 +43,8 @@ def function(dict_obj,string):
             else:
                 task_exec(dict_obj['Function'],dict_obj['Inputs'],string)
      
-parsed_yaml = yamlParse('D:\KLA\DataSet\Milestone1\Milestone1A.yaml')
-#main_dict = returnNestedDict(parsed_yaml)
+parsed_yaml = yamlParse(YAML_FILE_NAME)
+
 string = str(list(parsed_yaml.keys())[0])
 function(parsed_yaml[string],string)
 

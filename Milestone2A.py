@@ -7,6 +7,8 @@ import pandas as pd
 D = dict()
 lock = threading.Lock()
 LOG_FILENAME = 'milestone_2A_log.txt'
+YAML_FILE_NAME = 'D:\KLA\DataSet\Milestone1\Milestone1A.yaml'
+
 Format = "%(asctime)s.%(msecs)06d;%(message)s"
 logging.basicConfig(
     format=Format,
@@ -52,9 +54,10 @@ def task_exec(function,input_dict,string,condition=None):
             else:
                 logging.info(string+" "+"Skipped")
             print(function,input_dict,string)
+        
         elif sign == '<':
             if D[new_condition] < val:
-                #lock.acquire()
+
                 if function == 'TimeFunction':
                     logging.info(string+" "+"Entry")
                     logging.info(string+" "+"Executing"+" "+function+" "+"("+str(input_dict['FunctionInput'])+', '+str(input_dict['ExecutionTime'])+")")
@@ -70,7 +73,7 @@ def task_exec(function,input_dict,string,condition=None):
                     dummy_string += ".NoOfDefects"
                     D[dummy_string] = num_defects
                     logging.info(string+" "+"Exit")
-                #lock.release()
+
             else:
                 logging.info(string+" "+"Skipped")
             print(function,input_dict,string)
@@ -118,8 +121,8 @@ def function(dict_obj,string):
         else:
             task_exec(dict_obj['Function'],dict_obj['Inputs'],string,None)
      
-parsed_yaml = yamlParse('D:\KLA\DataSet\Milestone2\Milestone2A.yaml')
-#main_dict = returnNestedDict(parsed_yaml)
+parsed_yaml = yamlParse(YAML_FILE_NAME)
+
 string = str(list(parsed_yaml.keys())[0])
 function(parsed_yaml[string],string)
 print(D)
