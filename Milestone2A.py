@@ -17,14 +17,17 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %H:%M:%S",
 )
 
-def yamlParse(filepath):
+def yaml_parse(filepath):
     with open(filepath) as stream:
         parsed_yaml = yaml.safe_load(stream)
     return parsed_yaml
 
-def timeFunction(input_dict):
+def time_function(input_dict):
     val = input_dict['ExecutionTime']
     time.sleep(int(val))
+
+name_constant = "D:\\KLA\\DataSet\\Milestone2\\"
+defect_string = ".NoOfDefects"
 
 def task_exec(function,input_dict,string,condition=None):
     if condition:
@@ -39,16 +42,16 @@ def task_exec(function,input_dict,string,condition=None):
                 if function == 'TimeFunction':
                     logging.info(string+" "+"Entry")
                     logging.info(string+" "+"Executing"+" "+function+" "+"("+str(input_dict['FunctionInput'])+', '+str(input_dict['ExecutionTime'])+")")
-                    timeFunction(input_dict)
+                    time_function(input_dict)
                     logging.info(string+" "+"Exit")
                 elif function == 'DataLoad':
                     logging.info(string+" "+"Entry")
-                    data = pd.read_csv("D:\\KLA\\DataSet\\Milestone2\\"+input_dict['Filename'])
+                    data = pd.read_csv(name_constant+input_dict['Filename'])
                     logging.info(string+" "+"Executing"+" "+function+" "+"("+str(input_dict['Filename'])+")")
                     dummy_string = ""
                     dummy_string += string
                     num_defects = data.shape[0] - 1
-                    dummy_string += ".NoOfDefects"
+                    dummy_string += defect_string
                     D[dummy_string] = num_defects
                     logging.info(string+" "+"Exit")
             else:
@@ -65,12 +68,12 @@ def task_exec(function,input_dict,string,condition=None):
                     logging.info(string+" "+"Exit")
                 elif function == 'DataLoad':
                     logging.info(string+" "+"Entry")
-                    data = pd.read_csv("D:\\KLA\\DataSet\\Milestone2\\"+input_dict['Filename'])
+                    data = pd.read_csv(name_constant+input_dict['Filename'])
                     logging.info(string+" "+"Executing"+" "+function+" "+"("+str(input_dict['Filename'])+")")
                     dummy_string = ""
                     dummy_string += string
                     num_defects = data.shape[0] - 1
-                    dummy_string += ".NoOfDefects"
+                    dummy_string += defect_string
                     D[dummy_string] = num_defects
                     logging.info(string+" "+"Exit")
 
@@ -81,16 +84,16 @@ def task_exec(function,input_dict,string,condition=None):
         if function == 'TimeFunction':
             logging.info(string+" "+"Entry")
             logging.info(string+" "+"Executing"+" "+function+" "+"("+str(input_dict['FunctionInput'])+', '+str(input_dict['ExecutionTime'])+")")
-            timeFunction(input_dict)
+            time_function(input_dict)
             logging.info(string+" "+"Exit")
         elif function == 'DataLoad':
             logging.info(string+" "+"Entry")
-            data = pd.read_csv("D:\\KLA\\DataSet\\Milestone2\\"+input_dict['Filename'])
+            data = pd.read_csv(name_constant+input_dict['Filename'])
             logging.info(string+" "+"Executing"+" "+function+" "+"("+str(input_dict['Filename'])+")")
             dummy_string = ""
             dummy_string += string
             num_defects = data.shape[0] - 1
-            dummy_string += ".NoOfDefects"
+            dummy_string += defect_string
             D[dummy_string] = num_defects
             logging.info(string+" "+"Exit")
         print(function,input_dict,string)
@@ -121,7 +124,7 @@ def function(dict_obj,string):
         else:
             task_exec(dict_obj['Function'],dict_obj['Inputs'],string,None)
      
-parsed_yaml = yamlParse(YAML_FILE_NAME)
+parsed_yaml = yaml_parse(YAML_FILE_NAME)
 
 string = str(list(parsed_yaml.keys())[0])
 function(parsed_yaml[string],string)

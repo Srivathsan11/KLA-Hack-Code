@@ -8,6 +8,7 @@ LOG_FILENAME = 'milestone_1B_log.txt'
 YAML_FILE_NAME = 'D:\KLA\DataSet\Milestone1\Milestone1A.yaml'
 
 Format = "%(asctime)s.%(msecs)06d;%(message)s"
+
 logging.basicConfig(
     format=Format,
     filename=LOG_FILENAME,
@@ -15,12 +16,12 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %H:%M:%S",
 )
 
-def yamlParse(filepath):
+def yaml_parse(filepath):
     with open(filepath) as stream:
         parsed_yaml = yaml.safe_load(stream)
     return parsed_yaml
 
-def timeFunction(input_dict):
+def time_function(input_dict):
     val = input_dict['ExecutionTime']
     time.sleep(int(val))
 
@@ -28,7 +29,7 @@ def task_exec(function,input_dict,string):
     if function == 'TimeFunction':
         logging.info(string+" "+"Entry")
         logging.info(string+" "+"Executing"+" "+function+" "+"("+str(input_dict['FunctionInput'])+', '+str(input_dict['ExecutionTime'])+")")
-        timeFunction(input_dict)
+        time_function(input_dict)
         logging.info(string+" "+"Exit")
     print(function,input_dict,string)
 
@@ -54,7 +55,7 @@ def function(dict_obj,string):
     elif dict_obj['Type'] == 'Task':
         task_exec(dict_obj['Function'],dict_obj['Inputs'],string)
      
-parsed_yaml = yamlParse(YAML_FILE_NAME)
+parsed_yaml = yaml_parse(YAML_FILE_NAME)
 
 string = str(list(parsed_yaml.keys())[0])
 function(parsed_yaml[string],string)
