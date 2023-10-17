@@ -3,14 +3,14 @@ import multiprocessing
 import logging
 import time
 
-LOG_FILENAME = 'milestone2A_log.txt'
+LOG_FILENAME = '/home/cheechu/KLA-Hack-Code/milestone2A_log.txt'
 YAML_FILE_NAME = 'D:\KLA\DataSet\Milestone1\Milestone1A.yaml'
 
 Format = "%(asctime)s.%(msecs)06d;%(message)s"
 logging.basicConfig(
     format=Format,
     filename=LOG_FILENAME,
-    level=logging.INFO,
+    level=logging.WARNING,
     datefmt="%Y-%m-%d %H:%M:%S",
 )
 
