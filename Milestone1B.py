@@ -25,37 +25,44 @@ def time_function(input_dict):
     val = input_dict['ExecutionTime']
     time.sleep(int(val))
 
-def task_exec(function,input_dict,string):
+def task_exec(function, input_dict, string):
     if function == 'TimeFunction':
-        logging.info(string+" "+"Entry")
-        logging.info(string+" "+"Executing"+" "+function+" "+"("+str(input_dict['FunctionInput'])+', '+str(input_dict['ExecutionTime'])+")")
+        function_name = "TimeFunction"
+    else:
+        function_name = "DataLoad"
+
+    logging.info(f"{string} Entry")
+    logging.info(f"{string} Executing {function_name} ({input_dict})")
+    if function == 'TimeFunction':
         time_function(input_dict)
-        logging.info(string+" "+"Exit")
-    print(function,input_dict,string)
+    logging.info(f"{string} Exit")
+    print(function, input_dict, string)
 
+def execute_activity(activity, string):
+    logging.info(f"{string} Entry")
+    if activity['Execution'] == 'Sequential':
+        for key, value in activity['Activities'].items():
+            execute_activity(value, f"{string}.{key}")
+    else:
+        L = activity['Activities'].keys()
+        threads = []
+        for i in L:
+            thread = threading.Thread(target=execute_activity, args=(activity['Activities'][i], f"{string}.{i}"))
+            threads.append(thread)
+            thread.start()
+        for thread in threads:
+            thread.join()
+    logging.info(f"{string} Exit")
 
-def function(dict_obj,string):
-    if dict_obj['Type'] == 'Flow':
-        if dict_obj['Execution'] == 'Sequential':
-            logging.info(string+" "+"Entry")
-            for key in dict_obj['Activities'].keys():
-                function(dict_obj['Activities'][key],string+"."+str(key))
-            logging.info(string+" "+"Exit")
-        else:
-            logging.info(string+" "+"Entry")
-            L = dict_obj['Activities'].keys()
-            res = []
-            for i in L:
-                pr = threading.Thread(target=function,args=(dict_obj['Activities'][i],string+"."+str(i)))
-                res.append(pr)
-                pr.start()
-            for r in res:
-                r.join()
-            logging.info(string+" "+"Exit")
-    elif dict_obj['Type'] == 'Task':
-        task_exec(dict_obj['Function'],dict_obj['Inputs'],string)
-     
-parsed_yaml = yaml_parse(YAML_FILE_NAME)
+def execute_task(task, string):
+    if "Condition" in task:
+        logging.info(task['Condition'])
+    task_exec(task['Function'], task['Inputs'], string)
 
-string = str(list(parsed_yaml.keys())[0])
-function(parsed_yaml[string],string)
+def main():
+    parsed_yaml = yaml_parse(YAML_FILE_NAME)
+    root_key = list(parsed_yaml.keys())[0]
+    execute_activity(parsed_yaml[root_key], root_key)
+
+if __name__ == '__main__':
+    main()

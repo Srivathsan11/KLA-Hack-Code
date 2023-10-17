@@ -1,5 +1,4 @@
 import yaml
-import multiprocessing
 import logging
 import time
 
@@ -23,30 +22,38 @@ def time_function(input_dict):
     val = input_dict['ExecutionTime']
     time.sleep(int(val))
 
-def task_exec(function,input_dict,string):
+def execute_flow(flow_dict, string):
+    logging.info(f"{string} Entry")
+    for key, value in flow_dict['Activities'].items():
+        execute_activity(value, f"{string}.{key}")
+    logging.info(f"{string} Exit")
+
+def execute_activity(activity_dict, string):
+    if activity_dict['Type'] == 'Flow':
+        execute_flow(activity_dict, string)
+    else:
+        task_exec(activity_dict['Function'], activity_dict['Inputs'], string)
+
+def task_exec(function, input_dict, string):
     if function == 'TimeFunction':
-        logging.info(string+" "+"Entry")
-        logging.info(string+" "+"Executing"+" "+function+" "+"("+str(input_dict['FunctionInput'])+', '+str(input_dict['ExecutionTime'])+")")
+        function_name = "TimeFunction"
+    else:
+        function_name = "DataLoad"
+
+    logging.info(f"{string} Entry")
+    logging.info(f"{string} Executing {function_name} ({input_dict})")
+    if function == 'TimeFunction':
         time_function(input_dict)
-        logging.info(string+" "+"Exit")
-    print(function,input_dict,string)
+    logging.info(f"{string} Exit")
+    print(function, input_dict, string)
 
+def main():
+    parsed_yaml = yaml_parse(YAML_FILE_NAME)
+    root_key = list(parsed_yaml.keys())[0]
+    execute_activity(parsed_yaml[root_key], root_key)
 
-def function(dict_obj,string):
-    for k in dict_obj.keys():
-        if k=='Type':
-            if dict_obj[k] =='Flow':
-                logging.info(string+" "+"Entry")
-                for key in dict_obj['Activities'].keys():
-                    function(dict_obj['Activities'][key],string+"."+str(key))
-                logging.info(string+" "+"Exit")
-            else:
-                task_exec(dict_obj['Function'],dict_obj['Inputs'],string)
-     
-parsed_yaml = yaml_parse(YAML_FILE_NAME)
-
-string = str(list(parsed_yaml.keys())[0])
-function(parsed_yaml[string],string)
+if __name__ == '__main__':
+    main()
 
 
         
